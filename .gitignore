@@ -1,0 +1,8 @@
+/vendor/
+/build/*
+/.idea
+/composer.lock
+!/docker/app/packaged/.gitkeep
+!/app/.gitkeep
+!/bin/.gitkeep
+/logs

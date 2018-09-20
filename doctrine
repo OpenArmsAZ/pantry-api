@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Doctrine CLI Tool
+ *
+ * Usage:  ./doctrine.php -h
+ *
+ * @var $container
+ */
+
+require __DIR__ . '/cli-bootstrap.php';
+
+
+// Add the doctrine migration commands.
+$commands = array(
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand(),
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand(),
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand(),
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand(),
+    new \Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand()
+);
+
+
+$entityManager = $container->get('EntityManager');
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+$helperSet = ConsoleRunner::createHelperSet($entityManager);
+$helperSet->set(new \Symfony\Component\Console\Helper\QuestionHelper(),'dialog');
+
+ConsoleRunner::run($helperSet, $commands);

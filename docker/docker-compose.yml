@@ -1,0 +1,55 @@
+version: '2'
+services:
+  pantry:
+    stdin_open: true
+    tty: true
+    build:
+        context: ./app
+        dockerfile: Dockerfile
+    volumes:
+      - ../:/app
+      - ./app/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    ports:
+      - 80:80
+    environment:
+      XDEBUG_CONFIG: "remote_host=${XDEBUG_HOST}"
+      PHP_IDE_CONFIG: "serverName=${SERVICE_NAME}"
+      ENVIRONMENT: development
+      JWT_SECRET: password
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: pantry
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: 123
+      LOG_HOST: fluentd
+      LOG_PORT: 24224
+    networks:
+      - adrnet
+  mysql:
+      image: mariadb:10.2
+      ports:
+        - 3306:3306
+      expose:
+        - 3306
+      environment:
+        MYSQL_ROOT_PASSWORD: 123
+        MYSQL_DATABASE: pantry
+      volumes:
+        - pantrydb:/var/lib/mysql
+      networks:
+        - adrnet
+  fluentd:
+      image: fluent/fluentd
+      expose:
+        - 24224
+      volumes:
+        - ../logs:/fluentd/log
+      networks:
+        - adrnet
+
+volumes:
+  pantrydb:
+    driver: local
+
+networks:
+  adrnet:
+    driver: "bridge"
