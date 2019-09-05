@@ -13,8 +13,7 @@ This is the back-end API project that
 composer install
 
 # Spin up Docker
-cd docker
-./dev up
+docker-compose up
 ```
 Visit [http://localhost](http://localhost)
 
